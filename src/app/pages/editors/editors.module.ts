@@ -16,5 +16,8 @@ import { EditorsRoutingModule, routedComponents } from './editors-routing.module
   declarations: [
     ...routedComponents,
   ],
+  exports: [
+    ...routedComponents,
+  ],
 })
 export class EditorsModule { }

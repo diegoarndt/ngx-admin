@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbMediaBreakpoint, NbMediaBreakpointsService, NbThemeService } from '@nebular/theme';
+import { Subscription } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import { CountryOrderData } from '../../../@core/data/country-order';
 
@@ -11,7 +12,7 @@ import { CountryOrderData } from '../../../@core/data/country-order';
       <nb-card-header>Country Orders Statistics</nb-card-header>
       <nb-card-body>
         <ngx-country-orders-map (select)="selectCountryById($event)"
-                                countryId="USA">
+                                countryId="DEU">
         </ngx-country-orders-map>
         <ngx-country-orders-chart [countryName]="countryName"
                                   [data]="countryData"
@@ -31,6 +32,7 @@ export class CountryOrdersComponent implements OnInit, OnDestroy {
   countriesCategories: string[];
   breakpoint: NbMediaBreakpoint = { name: '', width: 0 };
   breakpoints: any;
+  subscription: Subscription;
 
   constructor(private themeService: NbThemeService,
               private breakpointService: NbMediaBreakpointsService,
@@ -44,8 +46,7 @@ export class CountryOrdersComponent implements OnInit, OnDestroy {
       .subscribe(([oldValue, newValue]) => {
         this.breakpoint = newValue;
       });
-    this.countryOrderService.getCountriesCategories()
-      .pipe(takeWhile(() => this.alive))
+    this.subscription = this.countryOrderService.getCountriesCategories()
       .subscribe((countriesCategories) => {
         this.countriesCategories = countriesCategories;
       });
@@ -62,6 +63,6 @@ export class CountryOrdersComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.alive = false;
+    this.subscription.unsubscribe();
   }
 }
